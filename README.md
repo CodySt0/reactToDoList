@@ -1,3 +1,5 @@
+I tried making this list work, but had some issues such as deleting a list item and checking them off. Thank you for taking a look at this project though, I appreciate it!
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

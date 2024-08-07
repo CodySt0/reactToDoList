@@ -1,35 +1,61 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useEffect } from "react";
+import TaskInput from "./components/TaskInput";
+import TaskList from "./components/TaskList";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [tasks, setTasks] = useState([]);
+  const taskLimit = 3;
+
+  useEffect(() => {
+    const storedTasks = JSON.parse(localStorage.getItem("tasks"));
+    if (storedTasks) {
+      setTasks(storedTasks);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
+
+  const addTask = (task) => {
+    setTasks([{ text: task, completed: false }, ...tasks]);
+  };
+
+  const deleteTask = (index) => {
+    if (tasks.length > taskLimit) {
+      setTasks(tasks.filter((_, i) => i !== index));
+    } else {
+      alert("You must have more than ${taskLimit} tasks to delete");
+    }
+  };
+
+  const toggleTaskCompletion = (index) => {
+    setTasks(
+      tasks.map((task, i) =>
+        i === index ? { ...task, completed: !task.completed } : task
+      )
+    );
+  };
+
+  const updateTask = (index, newText) => {
+    setTasks(
+      tasks.map((task, i) => (i === index ? { ...task, text: newText } : task))
+    );
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="App">
+      <h1> To-Do List</h1>
+      <TaskInput addTask={addTask} />
+      <TaskList
+        tasks={tasks}
+        deleteTask={deleteTask}
+        toggleTaskCompletion={toggleTaskCompletion}
+        updateTask={updateTask}
+      />
+    </div>
+  );
 }
 
-export default App
+export default App;
